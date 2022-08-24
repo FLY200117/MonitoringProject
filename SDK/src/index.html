@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>前端监控SDK</title>
+</head>
+
+<body>
+    <div id="content">
+        <div class="content2">
+            xxx
+            <input type="button" value="点击抛出错误" onclick="errorClick()">
+            <input type="button" value="点击抛出promise错误" onclick="promiseErrorClick()">
+            <input type="button" value="ajax成功请求" onclick="sendSuccess()">
+            <input type="button" value="ajax失败请求" onclick="sendError()">
+            <!-- <img src="testError.png" alt=""> -->
+            <button class="btn">发送请求</button>
+            xxx
+        </div>
+    </div>
+</body>
+
+    <script src="./monitor/utils/trackerr.js"></script>
+    <script>
+
+        var btn = document.querySelector('.btn')
+        btn.onclick = function () {
+            ajax({
+                type: "GET",
+                url: "/get",
+                data: {
+                    username: "jianjian",
+                    userpsw: "123456"
+                },
+                timeout: "3000",
+                success: function (xhr) {
+                    console.log(xhr);
+                },
+                error: function () {
+                    console.log("请求失败");
+                }
+            })
+        }
+
+        // test jsError.js
+        function errorClick() {
+            window.testError.error = 'error'
+        }
+
+        // test jsError.js
+        function promiseErrorClick() {
+            new Promise(function (resolve, reject) {
+                window.testError.error = 'error'
+                reject('error')
+            }).then(res => {
+                console.log(res)
+            })
+        }
+
+        // test api.js
+        function sendSuccess() {
+            let xhr = new XMLHttpRequest;
+            xhr.open('GET', '/success', true)
+            xhr.responseType = 'json';
+            xhr.onload = function () {
+                console.log(xhr.response)
+            }
+            xhr.send()
+        }
+
+        // test api.js
+        function sendError() {
+            let xhr = new XMLHttpRequest;
+            xhr.open('POST', '/error', true)
+            xhr.responseType = 'json';
+            xhr.onload = function () {
+                console.log(xhr.response)
+            }
+            xhr.onerror = function (error) {
+                console.log(error)
+            }
+            xhr.send("name=lyf")
+        }
+
+        // test timing.js
+        document.addEventListener('DOMContentLoaded', () => {
+            let start = Date.now()
+            while ((Date.now() - start) < 1000) {
+
+            }
+        })
+
+        document.addEventListener('load', () => {
+            let start = Date.now()
+            while ((Date.now() - start) < 3000) {
+
+            }
+        })
+
+
+        setTimeout(() => {
+            let content = document.getElementsByClassName('content2')[0]
+            let h1 = document.createElement('h1')
+            h1.innerHTML = '我是这个页面中的内容'
+            h1.setAttribute('elementtiming', 'meaningful')
+            content.appendChild(h1)
+        }, 2000);
+
+
+
+    </script>
+    <!-- <script src="testError.js"></script> -->
+
+</html>
